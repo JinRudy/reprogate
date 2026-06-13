@@ -108,7 +108,7 @@ Target list and outreach rules: [docs/launch/outreach-targets.md](outreach-targe
 ## Submission Checklist
 
 - GitHub topics are set.
-- `v0.1.6` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, issue template initialization, MIT license, and downloadable binaries.
+- `v0.1.7` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, issue template initialization, MIT license, and downloadable binaries.
 - README first screen shows the problem, one command, and sample output.
 - README shows CI, release, and license badges.
 - Demo issue exists: https://github.com/JinRudy/reprogate/issues/1

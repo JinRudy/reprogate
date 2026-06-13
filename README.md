@@ -61,7 +61,7 @@ Example output:
 | Init | `reprogate init github-action` | Generate a ready-to-use GitHub Actions workflow in the current repository. |
 | Init | `reprogate init issue-template` | Generate a GitHub bug report form that asks for ReproGate evidence. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.6` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.7` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -74,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.6 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.7 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -218,14 +218,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.6
+        uses: JinRudy/reprogate@v0.1.7
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.6
+- uses: JinRudy/reprogate@v0.1.7
   with:
     fail-on-missing: "true"
 ```

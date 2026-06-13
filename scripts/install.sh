@@ -40,7 +40,7 @@ mkdir -p "$bin_dir"
 tmp_file="$(mktemp)"
 trap 'rm -f "$tmp_file"' EXIT HUP INT TERM
 
-curl -fsSL "$url" -o "$tmp_file"
+curl -fL --retry 3 --retry-delay 1 --connect-timeout 10 --max-time 120 "$url" -o "$tmp_file"
 install -m 0755 "$tmp_file" "$bin_dir/reprogate"
 
 echo "reprogate installed to $bin_dir/reprogate"
