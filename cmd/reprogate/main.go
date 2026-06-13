@@ -52,5 +52,6 @@ Usage:
   reprogate redact < file.log
   reprogate ready-check --issue-body issue.md
   reprogate init github-action
+  reprogate init issue-template
   reprogate mcp`)
 }

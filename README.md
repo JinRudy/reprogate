@@ -25,9 +25,11 @@ For maintainers, add the readiness check to a repository in one command:
 
 ```bash
 reprogate init github-action
+reprogate init issue-template
 ```
 
 That writes `.github/workflows/reprogate.yml`, so new issues and PRs can be checked for reproduction steps, environment details, and logs.
+It can also write `.github/ISSUE_TEMPLATE/bug_report.yml`, so reporters are prompted for the same evidence before opening an issue.
 
 ## Why It Exists
 
@@ -57,8 +59,9 @@ Example output:
 | Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
 | Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
 | Init | `reprogate init github-action` | Generate a ready-to-use GitHub Actions workflow in the current repository. |
+| Init | `reprogate init issue-template` | Generate a GitHub bug report form that asks for ReproGate evidence. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.5` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.6` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -71,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.5 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.6 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -106,13 +109,20 @@ Generate a ready-to-use workflow in the current repository:
 reprogate init github-action
 ```
 
-By default this writes:
+Generate a matching bug report issue form:
+
+```bash
+reprogate init issue-template
+```
+
+By default these write:
 
 ```text
 .github/workflows/reprogate.yml
+.github/ISSUE_TEMPLATE/bug_report.yml
 ```
 
-If the workflow already exists, ReproGate leaves it untouched unless you pass `--force`.
+If the target file already exists, ReproGate leaves it untouched unless you pass `--force`.
 
 ## Capture A Reproduction Report
 
@@ -208,14 +218,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.5
+        uses: JinRudy/reprogate@v0.1.6
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.5
+- uses: JinRudy/reprogate@v0.1.6
   with:
     fail-on-missing: "true"
 ```

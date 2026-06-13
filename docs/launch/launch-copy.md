@@ -19,6 +19,7 @@ I built ReproGate:
 
   reprogate capture -- npm test
   reprogate init github-action
+  reprogate init issue-template
 
 It creates sanitized repro reports and checks issue/PR readiness.
 https://github.com/JinRudy/reprogate
@@ -54,6 +55,7 @@ It also has:
 - reprogate ready-check
 - reprogate mcp, exposing redact_text and check_issue over stdio
 - a GitHub Action for issue/PR readiness checks
+- reprogate init issue-template for a GitHub bug report form
 
 The first release intentionally does not let the MCP server execute arbitrary local commands. For now it only exposes safe text tools.
 
@@ -84,6 +86,7 @@ Post:
 - reprogate ready-check：检查 issue/PR 是否缺复现信息、环境、日志
 - reprogate mcp：给 AI coding 工具接入，当前只提供 redact_text 和 check_issue 两个安全工具
 - GitHub Action：可放到开源仓库做 issue/PR readiness check
+- reprogate init issue-template：生成 GitHub bug report 表单
 
 我现在更想找维护者反馈：你们处理不可复现 issue 时，最想自动收集哪些信息？
 ```
@@ -105,7 +108,7 @@ Target list and outreach rules: [docs/launch/outreach-targets.md](outreach-targe
 ## Submission Checklist
 
 - GitHub topics are set.
-- `v0.1.5` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, MIT license, and downloadable binaries.
+- `v0.1.6` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, issue template initialization, MIT license, and downloadable binaries.
 - README first screen shows the problem, one command, and sample output.
 - README shows CI, release, and license badges.
 - Demo issue exists: https://github.com/JinRudy/reprogate/issues/1

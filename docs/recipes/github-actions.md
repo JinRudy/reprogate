@@ -9,6 +9,12 @@ To generate the default workflow from the CLI instead, run:
 reprogate init github-action
 ```
 
+To add a matching GitHub bug report form, run:
+
+```bash
+reprogate init issue-template
+```
+
 ## Summary-Only Intake Check
 
 Use this when you want a low-risk first rollout. It never fails the workflow and
@@ -27,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.5
+        uses: JinRudy/reprogate@v0.1.6
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
@@ -48,7 +54,7 @@ jobs:
   ready-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: JinRudy/reprogate@v0.1.5
+      - uses: JinRudy/reprogate@v0.1.6
         with:
           fail-on-missing: "true"
 ```
@@ -73,7 +79,7 @@ jobs:
       missing_count: ${{ steps.reprogate.outputs.missing_count }}
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.5
+        uses: JinRudy/reprogate@v0.1.6
 
   route:
     needs: ready-check
