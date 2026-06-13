@@ -1,0 +1,5 @@
+{
+  "issue": {
+    "body": "Steps to reproduce:\n1. run npm test\n\nEnvironment: macOS node 22\n\n```text\nFAIL app.test.ts\n```"
+  }
+}

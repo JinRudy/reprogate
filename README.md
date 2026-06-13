@@ -44,7 +44,7 @@ Example output:
 | Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
 | Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.0` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.1` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -161,12 +161,24 @@ jobs:
   ready-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
-        with:
-          go-version: '1.25'
-      - uses: JinRudy/reprogate@v0.1.0
+      - uses: JinRudy/reprogate@v0.1.1
 ```
+
+Strict mode fails the workflow when required evidence is missing:
+
+```yaml
+- uses: JinRudy/reprogate@v0.1.1
+  with:
+    fail-on-missing: "true"
+```
+
+Action inputs:
+
+| Input | Default | Description |
+| --- | --- | --- |
+| `event-path` | `$GITHUB_EVENT_PATH` | Path to the GitHub event JSON file. Relative paths are resolved from the caller workspace. |
+| `fail-on-missing` | `false` | Exit non-zero when reproduction steps, environment details, or logs are missing. |
+| `go-version` | `1.25` | Go version used by the composite action to run ReproGate. |
 
 ## Development
 

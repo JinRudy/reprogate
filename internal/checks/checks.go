@@ -3,6 +3,7 @@ package checks
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -60,18 +61,46 @@ func Analyze(input Input) Result {
 }
 
 func RunCLI(args []string, in io.Reader, out io.Writer) error {
-	body, err := readBody(args, in)
+	opts, err := parseOptions(args)
 	if err != nil {
 		return err
 	}
+	body, err := readBody(opts.issueBodyPath, in)
+	if err != nil {
+		return err
+	}
+	result := Analyze(Input{Body: body})
 	encoder := json.NewEncoder(out)
 	encoder.SetIndent("", "  ")
-	return encoder.Encode(Analyze(Input{Body: body}))
+	if err := encoder.Encode(result); err != nil {
+		return err
+	}
+	if opts.failOnMissing && len(result.Missing) > 0 {
+		return fmt.Errorf("missing required evidence: %s", strings.Join(result.Missing, ", "))
+	}
+	return nil
 }
 
-func readBody(args []string, in io.Reader) (string, error) {
-	if len(args) >= 2 && args[0] == "--issue-body" {
-		data, err := os.ReadFile(args[1])
+type options struct {
+	issueBodyPath string
+	failOnMissing bool
+}
+
+func parseOptions(args []string) (options, error) {
+	var opts options
+	fs := flag.NewFlagSet("ready-check", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	fs.StringVar(&opts.issueBodyPath, "issue-body", "", "path to issue or pull request body")
+	fs.BoolVar(&opts.failOnMissing, "fail-on-missing", false, "exit non-zero when reproduction evidence is missing")
+	if err := fs.Parse(args); err != nil {
+		return options{}, err
+	}
+	return opts, nil
+}
+
+func readBody(issueBodyPath string, in io.Reader) (string, error) {
+	if issueBodyPath != "" {
+		data, err := os.ReadFile(issueBodyPath)
 		if err != nil {
 			return "", err
 		}

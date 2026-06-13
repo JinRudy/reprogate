@@ -1,9 +1,63 @@
 name: ReproGate Ready Check
 description: Check issue and pull request readiness signals.
+author: JinRudy
+
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  event-path:
+    description: Path to the GitHub event JSON file. Defaults to GITHUB_EVENT_PATH.
+    required: false
+    default: ""
+  fail-on-missing:
+    description: Exit non-zero when reproduction steps, environment details, or logs are missing.
+    required: false
+    default: "false"
+  go-version:
+    description: Go version used to run ReproGate.
+    required: false
+    default: "1.25"
+
 runs:
   using: composite
   steps:
-    - shell: bash
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Run ReproGate readiness check
+      shell: bash
       run: |
+        set -euo pipefail
+        event_path="${{ inputs.event-path }}"
+        if [ -z "$event_path" ]; then
+          event_path="$GITHUB_EVENT_PATH"
+        elif [[ "$event_path" != /* ]]; then
+          event_path="$GITHUB_WORKSPACE/$event_path"
+        fi
+
         cd "$GITHUB_ACTION_PATH"
-        go run ./cmd/reprogate ready-check < "$GITHUB_EVENT_PATH" >> "$GITHUB_STEP_SUMMARY"
+
+        args=()
+        if [ "${{ inputs.fail-on-missing }}" = "true" ]; then
+          args+=(--fail-on-missing)
+        fi
+
+        result_file="$RUNNER_TEMP/reprogate-ready-check.json"
+        set +e
+        go run ./cmd/reprogate ready-check "${args[@]}" < "$event_path" | tee "$result_file"
+        status="${PIPESTATUS[0]}"
+        set -e
+
+        {
+          echo "## ReproGate Ready Check"
+          echo
+          echo '```json'
+          cat "$result_file"
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        exit "$status"

@@ -1,0 +1,41 @@
+name: action-self-test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  default-mode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run local ReproGate action
+        uses: ./
+        with:
+          event-path: .github/fixtures/low-signal-issue-event.json
+
+  fail-on-missing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run local ReproGate action with fail-on-missing
+        id: reprogate
+        uses: ./
+        continue-on-error: true
+        with:
+          event-path: .github/fixtures/low-signal-issue-event.json
+          fail-on-missing: "true"
+      - name: Assert missing evidence fails
+        shell: bash
+        run: |
+          test "${{ steps.reprogate.outcome }}" = "failure"
+
+  ready-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run local ReproGate action on ready issue
+        uses: ./
+        with:
+          event-path: .github/fixtures/ready-issue-event.json
+          fail-on-missing: "true"
