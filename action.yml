@@ -15,6 +15,10 @@ inputs:
     description: Exit non-zero when reproduction steps, environment details, or logs are missing.
     required: false
     default: "false"
+  comment-on-missing:
+    description: Post or update one issue or pull request comment when reproduction evidence is missing.
+    required: false
+    default: "false"
   go-version:
     description: Go version used to run ReproGate.
     required: false
@@ -73,6 +77,7 @@ runs:
         go run ./cmd/reprogate ready-check "${args[@]}" < "$event_path" | tee "$result_file"
         status="${PIPESTATUS[0]}"
         set -e
+        echo "$status" > "$RUNNER_TEMP/reprogate-ready-check-status"
 
         {
           echo "## ReproGate Ready Check"
@@ -82,4 +87,77 @@ runs:
           echo '```'
         } >> "$GITHUB_STEP_SUMMARY"
 
+    - name: Comment on missing evidence
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        if [ "${{ inputs.comment-on-missing }}" != "true" ]; then
+          exit 0
+        fi
+        if [ -z "${GH_TOKEN:-}" ]; then
+          echo "Skipping ReproGate comment because GH_TOKEN is empty."
+          exit 0
+        fi
+
+        event_path="${{ inputs.event-path }}"
+        if [ -z "$event_path" ]; then
+          event_path="$GITHUB_EVENT_PATH"
+        elif [[ "$event_path" != /* ]]; then
+          event_path="$GITHUB_WORKSPACE/$event_path"
+        fi
+
+        issue_number="$(jq -r '.issue.number // .pull_request.number // empty' "$event_path")"
+        if [ -z "$issue_number" ]; then
+          echo "Skipping ReproGate comment because this event is not an issue or pull request event."
+          exit 0
+        fi
+
+        result_file="$RUNNER_TEMP/reprogate-ready-check.json"
+        if [ ! -s "$result_file" ]; then
+          echo "Skipping ReproGate comment because the readiness result is missing."
+          exit 0
+        fi
+
+        ready="$(jq -r '.ready // false' "$result_file")"
+        if [ "$ready" = "true" ]; then
+          exit 0
+        fi
+
+        missing="$(jq -r '.missing // [] | map("- " + .) | join("\n")' "$result_file")"
+        if [ -z "$missing" ]; then
+          exit 0
+        fi
+
+        comment_body="$(cat <<EOF
+        <!-- reprogate-missing-evidence -->
+        Thanks for the report. ReproGate found that this issue is missing:
+
+        $missing
+
+        Please add the missing details, or generate a paste-ready report with:
+
+        \`\`\`bash
+        reprogate capture -- <failing command>
+        \`\`\`
+        EOF
+        )"
+
+        previous_id="$(gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number/comments" --paginate --jq '.[] | select(.user.type == "Bot" and (.body | contains("<!-- reprogate-missing-evidence -->"))) | .id' | tail -n 1)"
+        if [ -n "$previous_id" ]; then
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$previous_id" -f body="$comment_body" >/dev/null
+        else
+          gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number/comments" -f body="$comment_body" >/dev/null
+        fi
+
+    - name: Finish with readiness status
+      shell: bash
+      run: |
+        set -euo pipefail
+        status_file="$RUNNER_TEMP/reprogate-ready-check-status"
+        if [ ! -s "$status_file" ]; then
+          exit 1
+        fi
+        status="$(cat "$status_file")"
         exit "$status"

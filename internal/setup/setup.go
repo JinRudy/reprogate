@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.8
+        uses: JinRudy/reprogate@v0.1.9
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 `
 

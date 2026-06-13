@@ -16,7 +16,7 @@ It ships as a GitHub Action for issue and PR intake, plus a small CLI for report
 ## Add The Action
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.8
+- uses: JinRudy/reprogate@v0.1.9
 ```
 
 Use it on new or edited issues and pull requests:
@@ -34,9 +34,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.8
+        uses: JinRudy/reprogate@v0.1.9
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
+
+To have ReproGate update one issue or pull request comment when evidence is missing:
+
+```yaml
+- uses: JinRudy/reprogate@v0.1.9
+  with:
+    comment-on-missing: "true"
+```
+
+This requires `issues: write` permission in the caller workflow.
 
 ## What It Checks
 
@@ -91,7 +101,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.8 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.9 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -235,14 +245,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.8
+        uses: JinRudy/reprogate@v0.1.9
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.8
+- uses: JinRudy/reprogate@v0.1.9
   with:
     fail-on-missing: "true"
 ```
@@ -264,6 +274,7 @@ Action inputs:
 | --- | --- | --- |
 | `event-path` | `$GITHUB_EVENT_PATH` | Path to the GitHub event JSON file. Relative paths are resolved from the caller workspace. |
 | `fail-on-missing` | `false` | Exit non-zero when reproduction steps, environment details, or logs are missing. |
+| `comment-on-missing` | `false` | Post or update one issue or pull request comment when reproduction evidence is missing. Requires `issues: write`. |
 | `go-version` | `1.25` | Go version used by the composite action to run ReproGate. |
 
 More copy-paste workflows: [docs/recipes/github-actions.md](docs/recipes/github-actions.md).
