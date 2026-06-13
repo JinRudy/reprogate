@@ -5,15 +5,64 @@
 [![Release](https://img.shields.io/github/v/release/JinRudy/reprogate?sort=semver)](https://github.com/JinRudy/reprogate/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-ReproGate turns "please provide a reproduction" into a one-command workflow.
+ReproGate helps maintainers stop repeating the same question:
 
-It is a small Go CLI, GitHub Action, and MCP server for maintainers who are tired of asking for the same missing evidence in bug reports:
+> Can you provide reproduction steps, environment details, and logs?
+
+It ships as a GitHub Action for issue and PR intake, plus a small CLI for reporters who need to generate a paste-ready reproduction report.
+
+## Add The Action
+
+```yaml
+- uses: JinRudy/reprogate@v0.1.7
+```
+
+Use it on new or edited issues and pull requests:
+
+```yaml
+name: reprogate
+on:
+  issues:
+    types: [opened, edited]
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  ready-check:
+    runs-on: ubuntu-latest
+    steps:
+      - id: reprogate
+        uses: JinRudy/reprogate@v0.1.7
+      - run: echo "${{ steps.reprogate.outputs.summary }}"
+```
+
+## What It Checks
+
+ReproGate looks for the evidence maintainers usually need before a bug is actionable:
 
 - reproduction steps
 - environment details
-- command output
-- sanitized logs
-- dependency and runtime context
+- logs or command output
+
+When evidence is missing, the Action exposes outputs such as `ready`, `labels`, `missing`, `missing_count`, and `summary` so your workflow can label, route, fail, or just report the result.
+
+## Fast Repository Setup
+
+Generate the workflow and a matching bug report form:
+
+```bash
+reprogate init github-action
+reprogate init issue-template
+```
+
+These commands write:
+
+- `.github/workflows/reprogate.yml`
+- `.github/ISSUE_TEMPLATE/bug_report.yml`
+
+## Reporter CLI
+
+Reporters can generate a sanitized Markdown report from the failing command:
 
 ```bash
 reprogate capture -- npm test
@@ -21,47 +70,11 @@ reprogate capture -- npm test
 
 That writes `.reprogate/repro.md`, ready to paste into a GitHub issue, Stack Overflow question, or maintainer discussion.
 
-For maintainers, add the readiness check to a repository in one command:
+## Other Entry Points
 
-```bash
-reprogate init github-action
-reprogate init issue-template
-```
-
-That writes `.github/workflows/reprogate.yml`, so new issues and PRs can be checked for reproduction steps, environment details, and logs.
-It can also write `.github/ISSUE_TEMPLATE/bug_report.yml`, so reporters are prompted for the same evidence before opening an issue.
-
-## Why It Exists
-
-Maintainers lose time on issues that say "it fails" but omit the command, OS, runtime, logs, lockfile state, and expected behavior. ReproGate gives reporters a repeatable way to collect that evidence before the maintainer has to ask.
-
-For maintainers, ReproGate can also check issue and PR text:
-
-```bash
-cat issue.md | reprogate ready-check
-```
-
-Example output:
-
-```json
-{
-  "labels": ["needs-repro", "missing-env", "missing-log"],
-  "missing": ["reproduction steps", "environment details", "logs or command output"],
-  "summary": "labels: needs-repro, missing-env, missing-log; missing: reproduction steps, environment details, logs or command output"
-}
-```
-
-## What It Does
-
-| Surface | Command | Use case |
-| --- | --- | --- |
-| Capture | `reprogate capture -- <command>` | Run a failing command and generate a sanitized reproduction report. |
-| Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
-| Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
-| Init | `reprogate init github-action` | Generate a ready-to-use GitHub Actions workflow in the current repository. |
-| Init | `reprogate init issue-template` | Generate a GitHub bug report form that asks for ReproGate evidence. |
-| MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.7` | Add readiness checks to issue and PR workflows. |
+- `reprogate ready-check`: check issue or PR text from a local file or stdin.
+- `reprogate redact`: remove likely secrets before sharing logs.
+- `reprogate mcp`: let AI coding tools redact text and check issue quality over stdio.
 
 ## Install
 
