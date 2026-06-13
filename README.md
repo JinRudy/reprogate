@@ -48,6 +48,8 @@ ReproGate looks for the evidence maintainers usually need before a bug is action
 
 When evidence is missing, the Action exposes outputs such as `ready`, `labels`, `missing`, `missing_count`, and `summary` so your workflow can label, route, fail, or just report the result.
 
+Need automated comments or labels? See the [GitHub Actions recipes](docs/recipes/github-actions.md).
+
 ## Fast Repository Setup
 
 Generate the workflow and a matching bug report form:
