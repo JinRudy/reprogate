@@ -85,6 +85,6 @@ Repo: https://github.com/JinRudy/reprogate
 - GitHub topics are set.
 - `v0.1.0` release exists.
 - README first screen shows the problem, one command, and sample output.
-- Demo issue exists.
+- Demo issue exists: https://github.com/JinRudy/reprogate/issues/1
 - Example reproduction report is linked from README.
 - GitHub Actions is green on the release commit.

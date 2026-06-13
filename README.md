@@ -68,6 +68,8 @@ cat .reprogate/repro.md
 
 Example report: [docs/examples/repro.md](docs/examples/repro.md)
 
+Demo issue: [#1 shows how a low-signal report is flagged](https://github.com/JinRudy/reprogate/issues/1).
+
 ## Capture A Reproduction Report
 
 ```bash
