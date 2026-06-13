@@ -8,6 +8,7 @@ ReproGate turns those missing pieces into machine-checkable artifacts:
 
 - A local CLI captures a failing command and writes a sanitized Markdown reproduction report.
 - A GitHub Action checks issues and pull requests for review readiness signals.
+- A stdio MCP server lets AI coding tools redact logs and check issue/PR evidence through ReproGate.
 - The project stays deterministic and small; it does not try to detect whether text or code was AI-generated.
 
 ## Target Users
@@ -18,7 +19,7 @@ ReproGate turns those missing pieces into machine-checkable artifacts:
 
 ## MVP Scope
 
-The first release includes four user-visible surfaces.
+The first release includes five user-visible surfaces.
 
 1. `reprogate capture -- <command>`
    - Runs the command.
@@ -40,6 +41,12 @@ The first release includes four user-visible surfaces.
    - Emits a Markdown summary.
    - Optionally applies labels: `needs-repro`, `missing-env`, `missing-log`, `review-ready`, `risky-diff`.
 
+5. MCP server
+   - Runs with `reprogate mcp` over stdio.
+   - Exposes `redact_text` for sanitizing pasted logs or error messages.
+   - Exposes `check_issue` for evaluating whether an issue or PR body has reproduction steps, environment details, and logs.
+   - Does not execute local commands in the MVP. Command execution through AI requires a later explicit allowlist and confirmation design.
+
 ## Non-Goals
 
 - No AI PR detection.
@@ -48,6 +55,7 @@ The first release includes four user-visible surfaces.
 - No Docker deployment dashboard.
 - No automatic issue closing.
 - No uploading local files without an explicit user command.
+- No MCP tool that lets an AI execute arbitrary local commands in the MVP.
 
 ## Architecture
 
@@ -58,6 +66,7 @@ ReproGate is a Go CLI with small packages.
 - `internal/redact`: secret and path redaction.
 - `internal/report`: Markdown report rendering.
 - `internal/checks`: issue and pull request readiness checks.
+- `internal/mcpserver`: stdio MCP server exposing safe ReproGate tools.
 - `internal/githubaction`: GitHub Actions input/output adapter.
 
 The GitHub Action uses the same binary. This keeps CLI and CI behavior consistent and avoids duplicating readiness rules in YAML or JavaScript.

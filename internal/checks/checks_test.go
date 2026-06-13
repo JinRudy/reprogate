@@ -1,0 +1,18 @@
+package checks
+
+import "testing"
+
+func TestAnalyzeFlagsMissingEvidence(t *testing.T) {
+	result := Analyze(Input{Body: "it fails"})
+	if !result.HasLabel("needs-repro") || !result.HasLabel("missing-env") || !result.HasLabel("missing-log") {
+		t.Fatalf("expected missing evidence labels, got %#v", result.Labels)
+	}
+}
+
+func TestAnalyzeMarksReadyWhenEvidenceExists(t *testing.T) {
+	body := "Steps to reproduce:\n1. run npm test\n\nEnvironment: macOS node 22\n\n```text\nFAIL app.test.ts\n```"
+	result := Analyze(Input{Body: body, ChangedFiles: 2, ChangedLines: 20})
+	if !result.HasLabel("review-ready") {
+		t.Fatalf("expected review-ready, got %#v", result.Labels)
+	}
+}

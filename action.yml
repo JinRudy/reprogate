@@ -1,0 +1,9 @@
+name: ReproGate Ready Check
+description: Check issue and pull request readiness signals.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        cd "$GITHUB_ACTION_PATH"
+        go run ./cmd/reprogate ready-check < "$GITHUB_EVENT_PATH" >> "$GITHUB_STEP_SUMMARY"
