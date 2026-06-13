@@ -10,6 +10,7 @@ import (
 	"github.com/JinRudy/reprogate/internal/mcpserver"
 	"github.com/JinRudy/reprogate/internal/redact"
 	"github.com/JinRudy/reprogate/internal/report"
+	"github.com/JinRudy/reprogate/internal/setup"
 )
 
 func main() {
@@ -34,6 +35,8 @@ func run(ctx context.Context, args []string) error {
 		return report.RunCLI(args[1:], os.Stdout)
 	case "ready-check":
 		return checks.RunCLI(args[1:], os.Stdin, os.Stdout)
+	case "init":
+		return setup.RunCLI(args[1:], os.Stdout)
 	case "mcp":
 		return mcpserver.Run(ctx, os.Stdin, os.Stdout)
 	default:
@@ -48,5 +51,6 @@ Usage:
   reprogate capture -- <command> [args...]
   reprogate redact < file.log
   reprogate ready-check --issue-body issue.md
+  reprogate init github-action
   reprogate mcp`)
 }

@@ -3,6 +3,12 @@
 These recipes are copy-paste starting points for maintainers who want fewer
 "please provide a reproduction" follow-ups.
 
+To generate the default workflow from the CLI instead, run:
+
+```bash
+reprogate init github-action
+```
+
 ## Summary-Only Intake Check
 
 Use this when you want a low-risk first rollout. It never fails the workflow and
@@ -21,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.3
+        uses: JinRudy/reprogate@v0.1.4
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
@@ -42,7 +48,7 @@ jobs:
   ready-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: JinRudy/reprogate@v0.1.3
+      - uses: JinRudy/reprogate@v0.1.4
         with:
           fail-on-missing: "true"
 ```
@@ -67,7 +73,7 @@ jobs:
       missing_count: ${{ steps.reprogate.outputs.missing_count }}
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.3
+        uses: JinRudy/reprogate@v0.1.4
 
   route:
     needs: ready-check

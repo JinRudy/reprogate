@@ -43,8 +43,9 @@ Example output:
 | Capture | `reprogate capture -- <command>` | Run a failing command and generate a sanitized reproduction report. |
 | Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
 | Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
+| Init | `reprogate init github-action` | Generate a ready-to-use GitHub Actions workflow in the current repository. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.3` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.4` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -57,7 +58,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.3 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.4 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -83,6 +84,22 @@ cat .reprogate/repro.md
 Example report: [docs/examples/repro.md](docs/examples/repro.md)
 
 Demo issue: [#1 shows how a low-signal report is flagged](https://github.com/JinRudy/reprogate/issues/1).
+
+## Initialize A Repository
+
+Generate a ready-to-use workflow in the current repository:
+
+```bash
+reprogate init github-action
+```
+
+By default this writes:
+
+```text
+.github/workflows/reprogate.yml
+```
+
+If the workflow already exists, ReproGate leaves it untouched unless you pass `--force`.
 
 ## Capture A Reproduction Report
 
@@ -178,14 +195,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.3
+        uses: JinRudy/reprogate@v0.1.4
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.3
+- uses: JinRudy/reprogate@v0.1.4
   with:
     fail-on-missing: "true"
 ```
