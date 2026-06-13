@@ -25,7 +25,7 @@ func TestRunCLIWritesGitHubActionWorkflow(t *testing.T) {
 		"name: reprogate",
 		"issues:",
 		"pull_request:",
-		"uses: JinRudy/reprogate@v0.1.7",
+		"uses: JinRudy/reprogate@v0.1.8",
 	} {
 		if !strings.Contains(workflow, want) {
 			t.Fatalf("expected workflow to contain %q, got %s", want, workflow)
@@ -70,7 +70,7 @@ func TestRunCLIForceOverwritesExistingWorkflow(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read workflow: %v", err)
 	}
-	if !strings.Contains(string(data), "uses: JinRudy/reprogate@v0.1.7") {
+	if !strings.Contains(string(data), "uses: JinRudy/reprogate@v0.1.8") {
 		t.Fatalf("expected workflow to be overwritten, got %s", string(data))
 	}
 }

@@ -16,7 +16,7 @@ It ships as a GitHub Action for issue and PR intake, plus a small CLI for report
 ## Add The Action
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.7
+- uses: JinRudy/reprogate@v0.1.8
 ```
 
 Use it on new or edited issues and pull requests:
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.7
+        uses: JinRudy/reprogate@v0.1.8
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
@@ -89,7 +89,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.7 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.8 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -233,14 +233,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.7
+        uses: JinRudy/reprogate@v0.1.8
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.7
+- uses: JinRudy/reprogate@v0.1.8
   with:
     fail-on-missing: "true"
 ```
