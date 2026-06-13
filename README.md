@@ -1,13 +1,50 @@
 # ReproGate
 
-ReproGate turns low-signal bug reports into paste-ready reproduction reports.
+ReproGate turns "please provide a reproduction" into a one-command workflow.
 
-It is a small Go CLI plus MCP server for developers and open source maintainers:
+It is a small Go CLI, GitHub Action, and MCP server for maintainers who are tired of asking for the same missing evidence in bug reports:
 
-- `reprogate capture -- <command>` runs a failing command and writes `.reprogate/repro.md`.
-- `reprogate redact` removes likely secrets from logs.
-- `reprogate ready-check` checks whether issue or PR text has reproduction steps, environment details, and logs.
-- `reprogate mcp` exposes safe ReproGate tools to AI coding clients over stdio.
+- reproduction steps
+- environment details
+- command output
+- sanitized logs
+- dependency and runtime context
+
+```bash
+reprogate capture -- npm test
+```
+
+That writes `.reprogate/repro.md`, ready to paste into a GitHub issue, Stack Overflow question, or maintainer discussion.
+
+## Why It Exists
+
+Maintainers lose time on issues that say "it fails" but omit the command, OS, runtime, logs, lockfile state, and expected behavior. ReproGate gives reporters a repeatable way to collect that evidence before the maintainer has to ask.
+
+For maintainers, ReproGate can also check issue and PR text:
+
+```bash
+cat issue.md | reprogate ready-check
+```
+
+Example output:
+
+```json
+{
+  "labels": ["needs-repro", "missing-env", "missing-log"],
+  "missing": ["reproduction steps", "environment details", "logs or command output"],
+  "summary": "labels: needs-repro, missing-env, missing-log; missing: reproduction steps, environment details, logs or command output"
+}
+```
+
+## What It Does
+
+| Surface | Command | Use case |
+| --- | --- | --- |
+| Capture | `reprogate capture -- <command>` | Run a failing command and generate a sanitized reproduction report. |
+| Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
+| Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
+| MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.0` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -20,6 +57,16 @@ For local development:
 ```bash
 go run ./cmd/reprogate help
 ```
+
+## 60-Second Demo
+
+```bash
+go install github.com/JinRudy/reprogate/cmd/reprogate@latest
+reprogate capture -- go test ./...
+cat .reprogate/repro.md
+```
+
+Example report: [docs/examples/repro.md](docs/examples/repro.md)
 
 ## Capture A Reproduction Report
 
@@ -67,15 +114,7 @@ or:
 cat issue.md | reprogate ready-check
 ```
 
-The output is JSON:
-
-```json
-{
-  "labels": ["needs-repro", "missing-env", "missing-log"],
-  "missing": ["reproduction steps", "environment details", "logs or command output"],
-  "summary": "labels: needs-repro, missing-env, missing-log; missing: reproduction steps, environment details, logs or command output"
-}
-```
+The output is JSON with labels and missing evidence.
 
 ## MCP
 
@@ -124,7 +163,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.25'
-      - uses: JinRudy/reprogate@main
+      - uses: JinRudy/reprogate@v0.1.0
 ```
 
 ## Development
