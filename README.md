@@ -5,7 +5,9 @@
 [![Release](https://img.shields.io/github/v/release/JinRudy/reprogate?sort=semver)](https://github.com/JinRudy/reprogate/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-ReproGate helps maintainers stop repeating the same question:
+ReproGate checks issues and PRs for reproduction steps, environment details, and logs.
+
+It helps maintainers stop repeating the same question:
 
 > Can you provide reproduction steps, environment details, and logs?
 

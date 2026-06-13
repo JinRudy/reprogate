@@ -1,5 +1,5 @@
 name: ReproGate Ready Check
-description: Check issue and pull request readiness signals.
+description: Check issues and PRs for reproduction steps, environment details, and logs.
 author: JinRudy
 
 branding:
