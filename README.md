@@ -207,6 +207,8 @@ Action inputs:
 | `fail-on-missing` | `false` | Exit non-zero when reproduction steps, environment details, or logs are missing. |
 | `go-version` | `1.25` | Go version used by the composite action to run ReproGate. |
 
+More copy-paste workflows: [docs/recipes/github-actions.md](docs/recipes/github-actions.md).
+
 ## Development
 
 ```bash
