@@ -35,8 +35,8 @@ func (r Result) HasLabel(label string) bool {
 
 func Analyze(input Input) Result {
 	body := strings.ToLower(input.Body)
-	var labels []string
-	var missing []string
+	labels := []string{}
+	missing := []string{}
 
 	if !(strings.Contains(body, "steps to reproduce") || strings.Contains(body, "1.") || strings.Contains(body, "repro")) {
 		labels = append(labels, "needs-repro")

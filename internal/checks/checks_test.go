@@ -1,6 +1,10 @@
 package checks
 
-import "testing"
+import (
+	"bytes"
+	"strings"
+	"testing"
+)
 
 func TestAnalyzeFlagsMissingEvidence(t *testing.T) {
 	result := Analyze(Input{Body: "it fails"})
@@ -14,5 +18,16 @@ func TestAnalyzeMarksReadyWhenEvidenceExists(t *testing.T) {
 	result := Analyze(Input{Body: body, ChangedFiles: 2, ChangedLines: 20})
 	if !result.HasLabel("review-ready") {
 		t.Fatalf("expected review-ready, got %#v", result.Labels)
+	}
+}
+
+func TestRunCLIEmitsEmptyMissingArrayWhenReady(t *testing.T) {
+	body := "Steps to reproduce:\n1. run npm test\n\nEnvironment: macOS node 22\n\n```text\nFAIL app.test.ts\n```"
+	var out bytes.Buffer
+	if err := RunCLI(nil, strings.NewReader(body), &out); err != nil {
+		t.Fatalf("run cli: %v", err)
+	}
+	if !strings.Contains(out.String(), `"missing": []`) {
+		t.Fatalf("expected empty missing array, got %s", out.String())
 	}
 }
