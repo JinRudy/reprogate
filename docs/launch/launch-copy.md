@@ -4,6 +4,26 @@
 
 ReproGate turns "please provide a reproduction" into a one-command workflow.
 
+## Ultra-Short Copy
+
+```text
+ReproGate is a CLI, GitHub Action, and MCP server that turns "please provide a reproduction" into a one-command workflow.
+```
+
+## X / Bluesky Draft
+
+```text
+Maintainers keep asking for the same missing bug details: repro steps, env, command output, logs.
+
+I built ReproGate:
+
+  reprogate capture -- npm test
+  reprogate init github-action
+
+It creates sanitized repro reports and checks issue/PR readiness.
+https://github.com/JinRudy/reprogate
+```
+
 ## Short Description
 
 ReproGate is a Go CLI, GitHub Action, and MCP server that helps developers generate sanitized reproduction reports and helps maintainers check whether issues or PRs include enough evidence to review.
@@ -71,14 +91,16 @@ Post:
 ## Maintainer Outreach Template
 
 ```text
-Hi, I am building ReproGate, a small CLI/GitHub Action for reducing back-and-forth on unreproducible issues.
+Hi, I am building ReproGate, a small CLI/GitHub Action/MCP server for reducing back-and-forth on unreproducible issues.
 
 It generates a sanitized reproduction report from a failing command and can check whether issue/PR text includes reproduction steps, environment details, and logs.
 
-I noticed your project has to ask for reproductions on some issues. If I adapt the output format to your issue template, would this be useful for your maintainers?
+I noticed your project already has a needs-reproduction workflow. Would a small Action like this be useful for issue intake, or are there fields your maintainers usually need that I should support first?
 
 Repo: https://github.com/JinRudy/reprogate
 ```
+
+Target list and outreach rules: [docs/launch/outreach-targets.md](outreach-targets.md).
 
 ## Submission Checklist
 
@@ -90,4 +112,5 @@ Repo: https://github.com/JinRudy/reprogate
 - Example reproduction report is linked from README.
 - Copy-paste GitHub Actions recipes are linked from README.
 - AI/MCP client recipes are linked from README.
+- Maintainer outreach target list is prepared.
 - GitHub Actions is green on the release commit.
