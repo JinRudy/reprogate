@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.4
+        uses: JinRudy/reprogate@v0.1.5
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
@@ -48,7 +48,7 @@ jobs:
   ready-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: JinRudy/reprogate@v0.1.4
+      - uses: JinRudy/reprogate@v0.1.5
         with:
           fail-on-missing: "true"
 ```
@@ -73,7 +73,7 @@ jobs:
       missing_count: ${{ steps.reprogate.outputs.missing_count }}
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.4
+        uses: JinRudy/reprogate@v0.1.5
 
   route:
     needs: ready-check

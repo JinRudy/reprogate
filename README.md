@@ -1,5 +1,10 @@
 # ReproGate
 
+[![CI](https://github.com/JinRudy/reprogate/actions/workflows/reprogate.yml/badge.svg)](https://github.com/JinRudy/reprogate/actions/workflows/reprogate.yml)
+[![Action self-test](https://github.com/JinRudy/reprogate/actions/workflows/action-self-test.yml/badge.svg)](https://github.com/JinRudy/reprogate/actions/workflows/action-self-test.yml)
+[![Release](https://img.shields.io/github/v/release/JinRudy/reprogate?sort=semver)](https://github.com/JinRudy/reprogate/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ReproGate turns "please provide a reproduction" into a one-command workflow.
 
 It is a small Go CLI, GitHub Action, and MCP server for maintainers who are tired of asking for the same missing evidence in bug reports:
@@ -15,6 +20,14 @@ reprogate capture -- npm test
 ```
 
 That writes `.reprogate/repro.md`, ready to paste into a GitHub issue, Stack Overflow question, or maintainer discussion.
+
+For maintainers, add the readiness check to a repository in one command:
+
+```bash
+reprogate init github-action
+```
+
+That writes `.github/workflows/reprogate.yml`, so new issues and PRs can be checked for reproduction steps, environment details, and logs.
 
 ## Why It Exists
 
@@ -45,7 +58,7 @@ Example output:
 | Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
 | Init | `reprogate init github-action` | Generate a ready-to-use GitHub Actions workflow in the current repository. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.4` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.5` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -58,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.4 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.5 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -195,14 +208,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: reprogate
-        uses: JinRudy/reprogate@v0.1.4
+        uses: JinRudy/reprogate@v0.1.5
       - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.4
+- uses: JinRudy/reprogate@v0.1.5
   with:
     fail-on-missing: "true"
 ```
@@ -235,3 +248,7 @@ go test ./...
 go run ./cmd/reprogate capture -- go env GOVERSION
 go run ./cmd/reprogate ready-check < .reprogate/repro.md
 ```
+
+## License
+
+MIT

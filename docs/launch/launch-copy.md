@@ -83,8 +83,9 @@ Repo: https://github.com/JinRudy/reprogate
 ## Submission Checklist
 
 - GitHub topics are set.
-- `v0.1.4` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, and downloadable binaries.
+- `v0.1.5` release includes the Marketplace-ready action, reusable outputs, one-command workflow initialization, MIT license, and downloadable binaries.
 - README first screen shows the problem, one command, and sample output.
+- README shows CI, release, and license badges.
 - Demo issue exists: https://github.com/JinRudy/reprogate/issues/1
 - Example reproduction report is linked from README.
 - Copy-paste GitHub Actions recipes are linked from README.
