@@ -158,6 +158,8 @@ MCP tools:
 - `redact_text`: redact likely secrets, credentials, and private paths from text.
 - `check_issue`: check whether issue or PR text has reproduction steps, environment details, and logs.
 
+AI client setup recipes: [docs/recipes/ai-clients.md](docs/recipes/ai-clients.md).
+
 The MVP deliberately does not expose a command-execution MCP tool. Letting an AI run arbitrary local commands needs an explicit allowlist and confirmation model.
 
 ## GitHub Action

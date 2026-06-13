@@ -88,4 +88,5 @@ Repo: https://github.com/JinRudy/reprogate
 - Demo issue exists: https://github.com/JinRudy/reprogate/issues/1
 - Example reproduction report is linked from README.
 - Copy-paste GitHub Actions recipes are linked from README.
+- AI/MCP client recipes are linked from README.
 - GitHub Actions is green on the release commit.
