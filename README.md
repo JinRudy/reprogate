@@ -44,7 +44,7 @@ Example output:
 | Redact | `reprogate redact` | Remove likely secrets before pasting logs into an issue. |
 | Ready check | `reprogate ready-check` | Check whether an issue or PR has enough evidence to review. |
 | MCP | `reprogate mcp` | Let AI coding tools redact logs and check issue quality over stdio. |
-| GitHub Action | `uses: JinRudy/reprogate@v0.1.2` | Add readiness checks to issue and PR workflows. |
+| GitHub Action | `uses: JinRudy/reprogate@v0.1.3` | Add readiness checks to issue and PR workflows. |
 
 ## Install
 
@@ -57,7 +57,7 @@ curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/inst
 Install a pinned version or custom directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.2 BIN_DIR="$HOME/bin" sh
+curl -fsSL https://raw.githubusercontent.com/JinRudy/reprogate/main/scripts/install.sh | REPROGATE_VERSION=v0.1.3 BIN_DIR="$HOME/bin" sh
 ```
 
 Go users can also install from source:
@@ -175,16 +175,29 @@ jobs:
   ready-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: JinRudy/reprogate@v0.1.2
+      - id: reprogate
+        uses: JinRudy/reprogate@v0.1.3
+      - run: echo "${{ steps.reprogate.outputs.summary }}"
 ```
 
 Strict mode fails the workflow when required evidence is missing:
 
 ```yaml
-- uses: JinRudy/reprogate@v0.1.2
+- uses: JinRudy/reprogate@v0.1.3
   with:
     fail-on-missing: "true"
 ```
+
+Action outputs:
+
+| Output | Description |
+| --- | --- |
+| `labels` | Comma-separated labels such as `needs-repro,missing-env,missing-log`. |
+| `missing` | Comma-separated missing evidence fields. |
+| `missing_count` | Number of missing evidence fields. |
+| `ready` | `true` when the issue or pull request is review-ready. |
+| `summary` | Human-readable readiness summary. |
+| `result_json` | Full readiness result as JSON. |
 
 Action inputs:
 

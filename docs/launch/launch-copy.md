@@ -83,7 +83,7 @@ Repo: https://github.com/JinRudy/reprogate
 ## Submission Checklist
 
 - GitHub topics are set.
-- `v0.1.2` release includes the Marketplace-ready action and downloadable binaries.
+- `v0.1.3` release includes the Marketplace-ready action, reusable outputs, and downloadable binaries.
 - README first screen shows the problem, one command, and sample output.
 - Demo issue exists: https://github.com/JinRudy/reprogate/issues/1
 - Example reproduction report is linked from README.

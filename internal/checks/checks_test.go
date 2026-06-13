@@ -2,6 +2,7 @@ package checks
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 )
@@ -51,5 +52,30 @@ func TestRunCLIDoesNotFailWhenRequiredEvidenceExists(t *testing.T) {
 	var out bytes.Buffer
 	if err := RunCLI([]string{"--fail-on-missing"}, strings.NewReader(body), &out); err != nil {
 		t.Fatalf("expected ready issue to pass: %v", err)
+	}
+}
+
+func TestRunCLIWritesGitHubOutputs(t *testing.T) {
+	outputPath := t.TempDir() + "/github-output"
+	var out bytes.Buffer
+	if err := RunCLI([]string{"--github-output", outputPath}, strings.NewReader("it fails"), &out); err != nil {
+		t.Fatalf("run cli: %v", err)
+	}
+	data, err := os.ReadFile(outputPath)
+	if err != nil {
+		t.Fatalf("read github output: %v", err)
+	}
+	outputs := string(data)
+	for _, want := range []string{
+		"labels=needs-repro,missing-env,missing-log\n",
+		"missing=reproduction steps,environment details,logs or command output\n",
+		"missing_count=3\n",
+		"ready=false\n",
+		"result_json<<REPROGATE_JSON\n",
+		`"needs-repro"`,
+	} {
+		if !strings.Contains(outputs, want) {
+			t.Fatalf("expected GitHub output to contain %q, got %s", want, outputs)
+		}
 	}
 }

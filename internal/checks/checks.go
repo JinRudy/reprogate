@@ -75,6 +75,11 @@ func RunCLI(args []string, in io.Reader, out io.Writer) error {
 	if err := encoder.Encode(result); err != nil {
 		return err
 	}
+	if opts.githubOutputPath != "" {
+		if err := writeGitHubOutputs(opts.githubOutputPath, result); err != nil {
+			return err
+		}
+	}
 	if opts.failOnMissing && len(result.Missing) > 0 {
 		return fmt.Errorf("missing required evidence: %s", strings.Join(result.Missing, ", "))
 	}
@@ -82,8 +87,9 @@ func RunCLI(args []string, in io.Reader, out io.Writer) error {
 }
 
 type options struct {
-	issueBodyPath string
-	failOnMissing bool
+	issueBodyPath    string
+	failOnMissing    bool
+	githubOutputPath string
 }
 
 func parseOptions(args []string) (options, error) {
@@ -92,10 +98,37 @@ func parseOptions(args []string) (options, error) {
 	fs.SetOutput(io.Discard)
 	fs.StringVar(&opts.issueBodyPath, "issue-body", "", "path to issue or pull request body")
 	fs.BoolVar(&opts.failOnMissing, "fail-on-missing", false, "exit non-zero when reproduction evidence is missing")
+	fs.StringVar(&opts.githubOutputPath, "github-output", "", "path to a GitHub Actions output file")
 	if err := fs.Parse(args); err != nil {
 		return options{}, err
 	}
 	return opts, nil
+}
+
+func writeGitHubOutputs(path string, result Result) error {
+	resultJSON, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	var b strings.Builder
+	fmt.Fprintf(&b, "labels=%s\n", strings.Join(result.Labels, ","))
+	fmt.Fprintf(&b, "missing=%s\n", strings.Join(result.Missing, ","))
+	fmt.Fprintf(&b, "missing_count=%d\n", len(result.Missing))
+	fmt.Fprintf(&b, "ready=%t\n", result.HasLabel("review-ready"))
+	fmt.Fprintf(&b, "summary=%s\n", result.Summary)
+	b.WriteString("result_json<<REPROGATE_JSON\n")
+	b.Write(resultJSON)
+	b.WriteByte('\n')
+	b.WriteString("REPROGATE_JSON\n")
+
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(b.String())
+	return err
 }
 
 func readBody(issueBodyPath string, in io.Reader) (string, error) {

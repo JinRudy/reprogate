@@ -10,9 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Run local ReproGate action
+        id: reprogate
         uses: ./
         with:
           event-path: .github/fixtures/low-signal-issue-event.json
+      - name: Assert missing evidence outputs
+        shell: bash
+        run: |
+          test "${{ steps.reprogate.outputs.ready }}" = "false"
+          test "${{ steps.reprogate.outputs.missing_count }}" = "3"
+          test "${{ steps.reprogate.outputs.labels }}" = "needs-repro,missing-env,missing-log"
 
   fail-on-missing:
     runs-on: ubuntu-latest
@@ -35,7 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Run local ReproGate action on ready issue
+        id: reprogate
         uses: ./
         with:
           event-path: .github/fixtures/ready-issue-event.json
           fail-on-missing: "true"
+      - name: Assert ready outputs
+        shell: bash
+        run: |
+          test "${{ steps.reprogate.outputs.ready }}" = "true"
+          test "${{ steps.reprogate.outputs.missing_count }}" = "0"

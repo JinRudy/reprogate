@@ -20,6 +20,26 @@ inputs:
     required: false
     default: "1.25"
 
+outputs:
+  labels:
+    description: Comma-separated readiness labels suggested by ReproGate.
+    value: ${{ steps.ready_check.outputs.labels }}
+  missing:
+    description: Comma-separated missing evidence fields.
+    value: ${{ steps.ready_check.outputs.missing }}
+  missing_count:
+    description: Number of missing evidence fields.
+    value: ${{ steps.ready_check.outputs.missing_count }}
+  ready:
+    description: "true when the issue or pull request is review-ready."
+    value: ${{ steps.ready_check.outputs.ready }}
+  summary:
+    description: Human-readable readiness summary.
+    value: ${{ steps.ready_check.outputs.summary }}
+  result_json:
+    description: Full ReproGate readiness result as JSON.
+    value: ${{ steps.ready_check.outputs.result_json }}
+
 runs:
   using: composite
   steps:
@@ -29,6 +49,7 @@ runs:
         go-version: ${{ inputs.go-version }}
 
     - name: Run ReproGate readiness check
+      id: ready_check
       shell: bash
       run: |
         set -euo pipefail
@@ -47,6 +68,7 @@ runs:
         fi
 
         result_file="$RUNNER_TEMP/reprogate-ready-check.json"
+        args+=(--github-output "$GITHUB_OUTPUT")
         set +e
         go run ./cmd/reprogate ready-check "${args[@]}" < "$event_path" | tee "$result_file"
         status="${PIPESTATUS[0]}"
